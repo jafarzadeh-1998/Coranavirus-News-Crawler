@@ -27,15 +27,19 @@ $(".table").click(function(){
         success: function (data) {
             table = "<table style='border: 1px solid black;'><thead><tr>";
             for(let index=0; index < data.head.length; index++ ){
-                table += "<th>"+data.head[index] + "</th>";
+                table += "<th style='border: 1px solid black;'>"+data.head[index] + "</th>";
             }
             table += "</tr></thead><tbody>";
             console.log(data.body);
             for(let rowIndex=0; rowIndex < data.body.length ;rowIndex++){
                 row = data.body[rowIndex];
                 table += "<tr>";
-                for (let colIndex = 0; colIndex < row.columns.length; colIndex++)
-                    table += "<td>" + row.columns[colIndex] + "</td>";
+                for (let colIndex = 0; colIndex < row.columns.length; colIndex++){
+                    if (rowIndex%2 == 0)
+                        table += "<td style='border: 1px solid black; background-color:#E0E0E0;'>" + row.columns[colIndex] + "</td>";
+                    else
+                        table += "<td style='border: 1px solid black;'>" + row.columns[colIndex] + "</td>";
+                }
                 table += "</tr>";
             }
             table += "</tbody></table>";
