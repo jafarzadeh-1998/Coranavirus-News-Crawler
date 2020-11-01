@@ -48,7 +48,61 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'request_logging.middleware.LoggingMiddleware',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters' : {
+        'file': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s  %(levelname)-8s %(message)s',
+            'backupCount': 10, # keep at most 10 log files
+            'maxBytes': 5242880, # 5*1024*1024 bytes (5MB)
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file-debug' : {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, "logs", 'debug.log'),
+            'formatter': 'file',
+        },
+        'file-info' : {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, "logs", 'info.log'),
+            'formatter': 'file',
+        },
+        'file-warning' : {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, "logs", 'warning.log'),
+            'formatter': 'file',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ["console", 'file-debug', 'file-info', 'file-warning'],
+            'level': 'DEBUG',  # change debug level as appropiate
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['file-debug', 'file-info', 'file-warning'],
+            'level': 'INFO',  # change debug level as appropiate
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['file-debug', 'file-info', 'file-warning'],
+            'level': 'ERROR',  # change debug level as appropiate
+            'propagate': False,
+        },
+    },
+}
 
 ROOT_URLCONF = 'Coronavirus_News_Crawler.urls'
 
