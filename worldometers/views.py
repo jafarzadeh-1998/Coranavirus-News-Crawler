@@ -77,15 +77,27 @@ def showCountry(request, countryName):
     pass
 
 
-PAGINATION = 5
+PAGINATION = 25
 
-def News(request):
+def News(request, pageNum):
     url = "https://www.worldometers.info/coronavirus/"
     bsContainer = bs((requests.get(url=url).content), "html.parser")
     allNews = bsContainer.find_all('div', class_="news_post")
-    for index in range(len(allNews)):
-        if index == PAGINATION:
+    news = []
+    for index in range(pageNum*PAGINATION, len(allNews)):
+        if index == (pageNum+1)*PAGINATION:
             break
         liTag = allNews[index].find('li')
-        print(liTag)
-        print(liTag.get_text())
+        countrySrc = liTag.find("a").get("href")
+        countryName = liTag.find_all("strong")[-1].get_text()
+        spans = liTag.find_all("span")
+        newsSources = []
+        if spans is not None:
+            newsSources = [s.find("a").get("href") for s in spans]
+        title = " ".join([t.get_text() for t in liTag.find_all("strong")[:-1]])
+        news.append({"title": title,
+                "countryName": countryName,
+                "countrySrc": countrySrc,
+                "newsSources": newsSources})
+
+    return JsonResponse(data={"news": news})

@@ -1,15 +1,27 @@
 function changeTab(tab) {
     if (tab == "table"){
-        $(".home").removeClass("active");
         $("#home").attr("style", "display: none;");
         $("#table").attr("style", "display: block;");
+        $("#news").attr("style", "display: none;");
+        $(".home").removeClass("active");
+        $(".news").removeClass("active");
         $(".table").addClass("active");
     }else if(tab == "home"){
         $("#home").attr("style", "display: block;");
         $("#table").attr("style", "display: none;");
+        $("#news").attr("style", "display: none;");
         $(".table").removeClass("active");
+        $(".news").removeClass("active");
         $(".home").addClass("active");
+    }else if(tab == "news"){
+        $("#news").attr("style", "display: block;");
+        $("#home").attr("style", "display: none;");
+        $("#table").attr("style", "display: none;");
+        $(".home").removeClass("active");
+        $(".table").removeClass("active");
+        $(".news").addClass("active");
     }
+
     return
 }
 
@@ -92,6 +104,57 @@ function sort() {
     });    
 }
 
+
+function fillNews(newsData) {
+    news = "<div class='news' ><table>";
+   for (let index = 0; index < newsData.length; index++){
+        news += "<tr class='class_ul'><td style='background-color:";
+        if (index%2 == 0)
+            news += "#C0C0C0;'>";
+        else
+            news += "#FFFFFF;'>";
+        news += "<li>" + newsData[index].title + "<a href='"+ newsData[index].countrySrc + "'> "+
+                newsData[index].countryName+"</a>\t";
+        for (let source_index = 0; source_index < newsData[index].newsSources.length; source_index++)
+            news += "<a style='font-size:12px;' href='"+ newsData[index].newsSources[source_index] + "'>original News link</a> - ";
+        news += "</li></td></tr>";
+    }
+
+   news += "</table></div>";
+   return news
+}
+function getNews(pageNum) {
+    $.ajax({
+        method: 'GET',
+        url: "/worldometers/top_news/"+pageNum,
+        dataType: 'json',
+        data: {},
+        success: function (data) {
+        $(".news_list").html(fillNews(data.news));
+        },
+        error: function (data) {
+            console.log(data);
+        },
+    });
+}
+
+$(".news").click(function(){
+    changeTab("news");
+    getNews(0);
+});
+
+$('.nextPage').click(function(){
+    let pageNum = $(".pageNumber").val();
+    $(".pageNumber").attr('value', parseInt(pageNum, 10)+1);
+    getNews($(".pageNumber").val());
+});
+
+$('.PrevPage').click(function(){
+    let pageNum = $(".pageNumber").val();
+    if (pageNum != 0)
+        $(".pageNumber").attr('value', parseInt(pageNum, 10)-1);
+    getNews($(".pageNumber").val());
+});
 
 function getCookie(name) {
     let cookieValue = null;
