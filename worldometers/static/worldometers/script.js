@@ -17,17 +17,10 @@ $(".home").click(function(){
     changeTab("home");
 });
 
-$(".table").click(function(){
-    changeTab("table");
-    $.ajax({
-        method: 'GET',
-        url: "/worldometers/get_table/",
-        dataType: 'json',
-        data: {},
-        success: function (data) {
-            table = "<table style='border: 1px solid black;'><thead><tr>";
+function buildTable(data) {
+    table = "<table style='border: 1px solid black;'><thead><tr>";
             for(let index=0; index < data.head.length; index++ ){
-                table += "<th style='border: 1px solid black;'>"+data.head[index] + "</th>";
+                table += "<th class='sort_by true' style='border: 1px solid black;'>"+data.head[index] + "</th>";
             }
             table += "</tr></thead><tbody>";
             console.log(data.body);
@@ -43,13 +36,61 @@ $(".table").click(function(){
                 table += "</tr>";
             }
             table += "</tbody></table>";
+    return table
+}
+
+$(".table").click(function(){
+    changeTab("table");
+    $.ajax({
+        method: 'GET',
+        url: "/worldometers/get_table/",
+        dataType: 'json',
+        data: {},
+        success: function (data) {
+            table = buildTable(data);
             $("#table").html(table);
+            sort();
         },
         error: function (data) {
             console.log(data);
         },
     });
 });
+
+function sort() {
+    $('.sort_by').click(function(){
+        console.log($(this).text());
+        let is_dec = $(this).hasClass('true')
+        console.log(is_dec);
+        $.ajax({
+            method: 'GET',
+            url: "/worldometers/get_sorted_table/",
+            dataType: 'json',
+            data: {"sort_by":$(this).text(),
+                   "is_dec": is_dec},
+            success: function (data) {
+                table = buildTable(data);
+                $("#table").html(table);
+                $(this).toggleClass("true");
+                // if (is_dec){
+                //     console.log("FUCKING INC");
+                //     $(this).attr("class", "sort_by False");
+                // }
+                // else {
+                //     console.log("FUCKING DEC");
+                //     $(this).attr("class", "sort_by True");
+                //     // $(this).removeClass("False");
+                //     // $(this).addClass("True");
+                // }
+
+                sort();
+            },
+            error: function (data) {
+                console.log(data);
+            },
+        });
+    });    
+}
 
 
 function getCookie(name) {
