@@ -1,0 +1,16 @@
+{% extends 'pressTv/base.html' %}
+{% load static %}
+{% block content %}
+    <button class='nextPage'>Next Page</button><button class='PrevPage'>Previous Page</button>
+    <input class='pageNumber' value=1 hidden>
+    <div class="news_list">
+        {% for news in newsList %}
+            {{news.pubdate}}
+            </br>
+            <a href={{news.link}}>{{news.title}} </a>
+            </br>
+            {{news.summary}}
+            <hr>
+        {% endfor %}
+    </div>
+{% endblock content %}
