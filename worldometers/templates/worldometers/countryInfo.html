@@ -1,0 +1,29 @@
+{% extends 'worldometers/base.html' %}
+{% load static %}
+{% block content %}
+<div style="text-align:center;width:100%">
+    <br>
+    <img src={{countryFlag}}>
+    </br>{{countryName}}
+    <div style="">
+        <h1>Coronavirus Cases:</h1>
+        <div class="maincounter-number" >
+            <span style="color:#AAA; font-size:40px;">{{totalNum}}</span>
+        </div>
+    </div>
+
+    <div style="">
+        <h1>Death Cases:</h1>
+        <div class="maincounter-number" >
+            <span style="color:#AAA; font-size:40px;">{{deathNum}}</span>
+        </div>
+    </div>
+
+    <div style=";">
+        <h1>Recoverd Cases:</h1>
+        <div class="maincounter-number" >
+            <span style="color:#AAA; font-size:40px;">{{recoverdNum}}</span>
+        </div>
+    </div>
+</div>
+{% endblock content %}

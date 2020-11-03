@@ -3,23 +3,38 @@ function changeTab(tab) {
         $("#home").attr("style", "display: none;");
         $("#table").attr("style", "display: block;");
         $("#news").attr("style", "display: none;");
+        $("#countries").attr("style", "display: none;");
         $(".home").removeClass("active");
         $(".news").removeClass("active");
+        $(".countries").removeClass("active");
         $(".table").addClass("active");
     }else if(tab == "home"){
         $("#home").attr("style", "display: block;");
         $("#table").attr("style", "display: none;");
         $("#news").attr("style", "display: none;");
+        $("#countries").attr("style", "display: none;");
         $(".table").removeClass("active");
         $(".news").removeClass("active");
+        $(".countries").removeClass("active");
         $(".home").addClass("active");
     }else if(tab == "news"){
         $("#news").attr("style", "display: block;");
         $("#home").attr("style", "display: none;");
         $("#table").attr("style", "display: none;");
+        $("#countries").attr("style", "display: none;");
         $(".home").removeClass("active");
         $(".table").removeClass("active");
+        $(".countries").removeClass("active");
         $(".news").addClass("active");
+    }else if(tab == "countries"){
+        $("#news").attr("style", "display: none;");
+        $("#home").attr("style", "display: none;");
+        $("#table").attr("style", "display: none;");
+        $("#countries").attr("style", "display: block;");
+        $(".home").removeClass("active");
+        $(".table").removeClass("active");
+        $(".news").removeClass("active");
+        $(".countries").addClass("active");
     }
 
     return
@@ -28,6 +43,7 @@ function changeTab(tab) {
 $(".home").click(function(){
     changeTab("home");
 });
+
 
 function buildTable(data) {
     table = "<table style='border: 1px solid black;'><thead><tr>";
@@ -68,6 +84,7 @@ $(".table").click(function(){
         },
     });
 });
+
 
 function sort() {
     $('.sort_by').click(function(){
@@ -123,6 +140,8 @@ function fillNews(newsData) {
    news += "</table></div>";
    return news
 }
+
+
 function getNews(pageNum) {
     $.ajax({
         method: 'GET',
@@ -154,6 +173,43 @@ $('.PrevPage').click(function(){
     if (pageNum != 0)
         $(".pageNumber").attr('value', parseInt(pageNum, 10)-1);
     getNews($(".pageNumber").val());
+});
+
+
+$(".countries").click(function () {
+    changeTab("countries");
+    $.ajax({
+        method: 'GET',
+        url: "/worldometers/get_countries_name/",
+        dataType: 'json',
+        data: {},
+        success: function (data) {
+            console.log(data);
+            let countries = "<table>";
+            let countriesData = data.countries;
+            for (let rowIndex = 0; rowIndex < countriesData.length; rowIndex=rowIndex+5) {
+                countries += "<tr>";
+                let colored = true;
+                for (let colIndex = rowIndex; (colIndex < rowIndex+5 & colIndex < countriesData.length); colIndex++) {
+                    countries += "<td";
+                    if ( colored ){
+                        countries += " style='background: #E0E0E0'>";
+                        colored = false;
+                    }else{
+                        countries += ">";
+                        colored = true;
+                    }
+                    countries += "<a href='/worldometers/"+ countriesData[colIndex].url +"'>" + countriesData[colIndex].name + "</a></td>";
+                }
+                countries += "</tr>";
+            }
+            countries += "</table>";
+            $("#countries").html(countries);
+        },
+        error: function (data) {
+            console.log(data);
+        },
+    });    
 });
 
 function getCookie(name) {

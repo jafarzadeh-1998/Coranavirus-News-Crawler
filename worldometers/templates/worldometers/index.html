@@ -1,45 +1,24 @@
+{% extends 'worldometers/base.html' %}
 {% load static %}
-<html>
-    <head>
-        <link rel="stylesheet" href={% static "worldometers/css.css" %}>
-    </head>
-    <body>
-        <div class="topnav">
-            <a class="active home">Home</a>
-            <a class="table">Table</a>
-            <a class="contries">Contries</a>
-            <a class="news">News</a>
-        </div>
-        <div id="home">
-            <div style="margin-top:15px ;padding-left: 50px">
-                <h1>Coronavirus Cases:</h1>
-                <div class="maincounter-number" style="padding-left: 50px">
-                    <span style="color:#aaa; font-size:40px;">{{totalNum}}</span>
-                </div>
-            </div>
+{% block content %}
+<div style="margin-top:15px ;padding-left: 50px">
+<h1>Coronavirus Cases:</h1>
+    <div class="maincounter-number" style="padding-left: 50px">
+        <span style="color:#aaa; font-size:40px;">{{totalNum}}</span>
+    </div>
+</div>
 
-            <div style="margin-top:15px ;padding-left: 50px">
-                <h1>Death Cases:</h1>
-                <div class="maincounter-number" style="padding-left: 50px;">
-                    <span style="color:#aaa; font-size:40px;">{{deathNum}}</span>
-                </div>
-            </div>
+<div style="margin-top:15px ;padding-left: 50px">
+    <h1>Death Cases:</h1>
+    <div class="maincounter-number" style="padding-left: 50px;">
+        <span style="color:#aaa; font-size:40px;">{{deathNum}}</span>
+    </div>
+</div>
 
-            <div style="margin-top:15px ;padding-left: 50px;">
-                <h1>Recoverd Cases:</h1>
-                <div class="maincounter-number" style="padding-left: 50px;">
-                    <span style="color:#aaa; font-size:40px;">{{recoverdNum}}</span>
-                </div>
-            </div>
-        </div>
-        <div id="table"></div>
-        <div id="news">
-            <button class='nextPage'>Next Page</button><button class='PrevPage'>Previous Page</button>
-            <input class='pageNumber' value=0 hidden>
-            <div class="news_list"></div>
-        </div>
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript"
-        src={% static 'worldometers/script.js' %}></script>
-    </body>
-</html>
+<div style="margin-top:15px ;padding-left: 50px;">
+    <h1>Recoverd Cases:</h1>
+    <div class="maincounter-number" style="padding-left: 50px;">
+        <span style="color:#aaa; font-size:40px;">{{recoverdNum}}</span>
+    </div>
+</div>
+{% endblock content %}

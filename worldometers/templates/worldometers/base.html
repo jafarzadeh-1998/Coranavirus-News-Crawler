@@ -1,0 +1,28 @@
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href={% static "worldometers/css.css" %}>
+        <title>COVID-19</title>
+    </head>
+    <body>
+        <div class="topnav">
+            <a class="active home">Home</a>
+            <a class="table">Table</a>
+            <a class="countries">Countries</a>
+            <a class="news">News</a>
+        </div>
+        <div id="home">
+            {% block content %} {% endblock content %}
+        </div>
+        <div id="table"></div>
+        <div id="countries"></div>
+        <div id="news" style="display: none">
+            <button class='nextPage'>Next Page</button><button class='PrevPage'>Previous Page</button>
+            <input class='pageNumber' value=0 hidden>
+            <div class="news_list"></div>
+        </div>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript"
+        src={% static 'worldometers/script.js' %}></script>
+    </body>
+</html>

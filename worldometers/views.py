@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup as bs
 
 import requests
 
+COUNTRY_COL = 1
+
 class index(TemplateView):
     template_name = "worldometers/index.html"
 
@@ -61,7 +63,7 @@ def sortTable(request):
         if table['head'][i] == sort_by:
             colIndex = i
             break
-    if colIndex != 1:
+    if colIndex != COUNTRY_COL:
         table['body'] = sorted(table['body'],
                             key=lambda t:\
                             int(''.join(filter(str.isdigit, t['columns'][colIndex].replace(",", "") )))
@@ -72,10 +74,6 @@ def sortTable(request):
             t['columns'][colIndex].replace("\n", ""),
             reverse=is_dec)
     return JsonResponse(data=table)
-
-def showCountry(request, countryName):
-    pass
-
 
 PAGINATION = 25
 
@@ -101,3 +99,37 @@ def News(request, pageNum):
                 "newsSources": newsSources})
 
     return JsonResponse(data={"news": news})
+
+
+def getCounteriesName(request):
+    url = "https://www.worldometers.info/coronavirus/"
+    bsContainer = bs((requests.get(url=url).content), "html.parser")
+    countries = []
+    for row in bsContainer.find("table").find("tbody").find_all("tr"):
+        cols = row.find_all("td")
+        countryCol = cols[COUNTRY_COL].find("a", class_="mt_a")
+        if countryCol :
+            countries.append({"name": countryCol.get_text().strip(),
+                              "url": countryCol.get("href")}) 
+    countries = sorted(countries, key=lambda t:t['name'].replace("\n", ""))
+    return JsonResponse(data={"countries": countries})
+
+
+class countryInfo(TemplateView):    
+    
+    template_name = "worldometers/countryInfo.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        countryName = self.kwargs['countryName']        
+        url = "https://www.worldometers.info/coronavirus/country/" + countryName
+        bsContainer = bs((requests.get(url=url).content), "html.parser")
+        countryName = bsContainer.find("h1").get_text().strip("\n")
+        countryFlag = "https://www.worldometers.info" + bsContainer.find("h1").find("img").get('src')
+        maincounterDivs = bsContainer.find_all("div", id="maincounter-wrap")
+        context["totalNum"] = maincounterDivs[0].find("span").get_text()
+        context["deathNum"] = maincounterDivs[1].find("span").get_text()
+        context["recoverdNum"] = maincounterDivs[2].find("span").get_text()
+        context["countryFlag"] = countryFlag
+        context["countryName"] = countryName
+        return context
